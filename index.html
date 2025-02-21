@@ -226,7 +226,8 @@
 
   <!-- Add the services modal -->
   <div id="servicesModal" class="services-modal hidden">
-    <div class="modal-content cyber-form">
+    <div class="modal-content">
+      <div class="glass-reflection"></div>
       <div class="modal-header">
         <h2 class="cyber-text text-3xl mb-4">Our AI Services</h2>
         <button class="close-button" onclick="toggleServices()">×</button>
@@ -374,5 +375,50 @@
       }
     });
   </script>
+
+  <!-- Update the cyber-button-small styles -->
+  <style>
+    .cyber-button-small {
+      /* Existing styles */
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: transparent;
+      /* Reduce padding and font size */
+      padding: 0.35rem 1.2rem;
+      border-radius: 0.4rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* Update the services container spacing */
+    .services-container {
+      margin-left: auto;
+      padding-left: 1.5rem; /* Reduced from 2rem */
+    }
+
+    /* Update the header styles */
+    header {
+      padding-right: 2rem !important; /* Override the existing padding */
+    }
+
+    .header-content {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-container {
+      flex-shrink: 0;
+    }
+
+    .services-container {
+      margin-left: auto; /* Push to the right */
+      padding-left: 2rem;
+    }
+  </style>
 </body>
 </html>
