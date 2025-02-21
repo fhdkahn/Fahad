@@ -189,7 +189,10 @@
         </div>
 
         <!-- Contact Form Section -->
-        <form action="https://getform.io/f/ajjmmjga" method="POST" class="cyber-form">
+        <form action="https://getform.io/f/ajjmmjga" 
+              method="POST" 
+              class="cyber-form"
+              data-webhook="https://api.getform.io/v1/forms/ajjmmjga?token=755btn1nwC2NnIyOOadzlK4DojitZFH5DwYUePt5YsHQGmHXfFoPCbMH6a7W">
           <div class="form-header">
             <h3 class="cyber-text text-2xl font-semibold mb-2">Ready to Transform Your Business?</h3>
             <p class="text-slate-300 mb-6">Let's discuss how AI can optimize your operations</p>
@@ -212,9 +215,10 @@
             </div>
           </div>
 
-          <button type="submit" class="cyber-button">
+          <button type="submit" class="cyber-button" id="submitButton">
             <span class="button-text">Initialize Consultation</span>
             <span class="button-glitch"></span>
+            <span class="success-icon hidden">✓</span>
           </button>
         </form>
       </div>
@@ -374,6 +378,67 @@
         toggleServices();
       }
     });
+
+    document.querySelector('.cyber-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitButton = document.getElementById('submitButton');
+      const buttonText = submitButton.querySelector('.button-text');
+      const successIcon = submitButton.querySelector('.success-icon');
+      
+      try {
+        // Change button state
+        submitButton.disabled = true;
+        buttonText.textContent = 'Initializing...';
+        
+        // Send to Getform
+        const formData = new FormData(this);
+        await fetch('https://getform.io/f/ajjmmjga', {
+          method: 'POST',
+          body: formData
+        });
+
+        // Success state
+        submitButton.classList.add('success');
+        buttonText.style.display = 'none';
+        successIcon.classList.remove('hidden');
+        
+        // Create and show success message
+        const successMessage = document.createElement('div');
+        successMessage.className = 'form-success-message';
+        successMessage.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-[#00ff9d]">✓</span>
+            <span class="text-white">Consultation Initialized Successfully</span>
+          </div>
+        `;
+        document.body.appendChild(successMessage);
+        
+        // Show message with animation
+        setTimeout(() => successMessage.classList.add('show'), 100);
+        
+        // Reset form
+        this.reset();
+        
+        // Reset button state after 2 seconds
+        setTimeout(() => {
+          submitButton.classList.remove('success');
+          submitButton.disabled = false;
+          buttonText.textContent = 'Initialize Consultation';
+          buttonText.style.display = 'block';
+          successIcon.classList.add('hidden');
+          
+          // Remove success message
+          successMessage.classList.remove('show');
+          setTimeout(() => successMessage.remove(), 300);
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        submitButton.disabled = false;
+        buttonText.textContent = 'Initialize Consultation';
+      }
+    });
   </script>
 
   <!-- Update the cyber-button-small styles -->
@@ -418,6 +483,49 @@
     .services-container {
       margin-left: auto; /* Push to the right */
       padding-left: 2rem;
+    }
+
+    /* Success animation styles */
+    .cyber-button.success {
+      background: linear-gradient(90deg, #00ff9d, #00c8ff);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .cyber-button.success .button-text {
+      animation: none;
+      opacity: 0;
+    }
+
+    .cyber-button .success-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      color: #1a1a1a;
+      font-size: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .cyber-button.success .success-icon {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .form-success-message {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(0,255,157,0.1);
+      border: 1px solid rgba(0,255,157,0.3);
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      backdrop-filter: blur(5px);
+      transform: translateX(200%);
+      transition: transform 0.3s ease;
+    }
+
+    .form-success-message.show {
+      transform: translateX(0);
     }
   </style>
 </body>
