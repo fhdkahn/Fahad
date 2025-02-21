@@ -1,0 +1,13 @@
+/* Move all styles from the <style> tag in your HTML to this file */
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ... rest of your CSS styles ... */ 
