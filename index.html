@@ -8,6 +8,668 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css" />
   
+  <!-- Add custom styles -->
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(to right, #ffffff, #e0e0e0);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .custom-form {
+      background-color: #2a2a2a;
+      border: 1px solid #404040;
+    }
+
+    .custom-input {
+      background-color: #333333;
+      border: 1px solid #404040;
+      color: #ffffff;
+    }
+
+    .custom-input:focus {
+      outline: 2px solid #666666;
+    }
+
+    .custom-button {
+      background-color: #ffffff;
+      color: #1a1a1a;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .custom-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Add canvas styling */
+    #animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Ensure content stays above canvas */
+    main, header {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ai-head-icon {
+      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+      transform-origin: center;
+      animation: hover 4s ease-in-out infinite;
+    }
+
+    @keyframes hover {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2px); }
+    }
+
+    .head-base {
+      animation: pulse 4s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+        stroke-width: 3;
+      }
+      50% {
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        stroke-width: 3.5;
+      }
+    }
+
+    .circuit-line {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      opacity: 0.7;
+    }
+
+    .brand-text {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(
+        120deg,
+        #ffffff 0%,
+        #a0a0a0 25%,
+        #ffffff 50%,
+        #a0a0a0 75%,
+        #ffffff 100%
+      );
+      background-size: 400% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 6s linear infinite;
+      text-shadow:
+        0 0 10px rgba(255,255,255,0.2),
+        0 0 20px rgba(255,255,255,0.1);
+      position: relative;
+      letter-spacing: 1px;
+    }
+
+    .brand-text::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255,255,255,0.8) 50%,
+        transparent 100%
+      );
+      transform: translateX(-100%);
+      animation: underline 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 400% 0; }
+      100% { background-position: -400% 0; }
+    }
+
+    @keyframes underline {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
+    /* Add Google Font for the brand text */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    /* Update the feature cards to be more responsive */
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      will-change: transform;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+    }
+
+    /* Services Modal Styles */
+    .services-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.4s ease-in-out;
+      transform: scale(0.95);
+    }
+
+    .services-modal.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      background: rgba(26,26,26,0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow:
+        0 0 40px rgba(0,0,0,0.2),
+        inset 0 0 20px rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+    }
+
+    .glass-reflection {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.2),
+        transparent
+      );
+      animation: reflectionSlide 3s linear infinite;
+    }
+
+    @keyframes reflectionSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Optimize animations */
+    .feature-icon, .gradient-text {
+      will-change: transform;
+      backface-visibility: hidden;
+      transform: translateZ(0);
+    }
+
+    /* Container padding */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+    }
+
+    /* Cyberpunk-inspired text effects */
+    .cyber-text {
+      background: linear-gradient(120deg, #ffffff, #a0a0a0, #ffffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      text-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    /* Animated typing effect */
+    .typing-text {
+      border-right: 2px solid #fff;
+      animation: typing 3s steps(30) infinite,
+                 blink .5s step-end infinite alternate;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* Feature cards */
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+
+    /* Cyberpunk form styling */
+    .cyber-form {
+      background: rgba(42,42,42,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .col-span-2 {
+      grid-column: span 2;
+    }
+
+    .cyber-label {
+      color: #a0a0a0;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cyber-input {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .cyber-input:focus {
+      border-color: rgba(255,255,255,0.3);
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+      outline: none;
+    }
+
+    .cyber-button {
+      background: linear-gradient(90deg, #ffffff, #a0a0a0);
+      color: #1a1a1a;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .cyber-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+    }
+
+    .button-glitch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-100%);
+    }
+
+    .cyber-button:hover .button-glitch {
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    @keyframes glitch {
+      0% { transform: translateX(-100%) }
+      100% { transform: translateX(100%) }
+    }
+
+    /* Fade in animation */
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cyber-button-small {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: transparent;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .cyber-button-small:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .cyber-button-small .button-text {
+      background: linear-gradient(
+        120deg,
+        #ffffff 0%,
+        #a0a0a0 25%,
+        #ffffff 50%,
+        #a0a0a0 75%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      background-size: 400% 100%;
+      animation: shimmer 6s linear infinite;
+    }
+
+    .services-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .services-modal.active {
+      opacity: 1;
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+      transition: all 0.3s ease;
+    }
+
+    .close-button:hover {
+      color: #a0a0a0;
+      transform: rotate(90deg);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Update the header styles */
+    header {
+      padding-right: 2rem !important; /* Override the existing padding */
+    }
+
+    .header-content {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-container {
+      flex-shrink: 0;
+    }
+
+    .services-container {
+      margin-left: auto; /* Push to the right */
+      padding-left: 2rem;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+    }
+
+    .typing-text {
+      display: inline-block;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .typing-text::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        transparent
+      );
+    }
+
+    /* Update the container padding */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+    }
+
+    /* Responsive feature cards */
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-width: 250px; /* Ensure minimum width */
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive form grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive columns */
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .col-span-2 {
+      grid-column: span 2;
+    }
+
+    /* Ensure the form is responsive */
+    .cyber-form {
+      background: rgba(42, 42, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Responsive input fields */
+    .cyber-input {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: white;
+      transition: all 0.3s ease;
+      width: 100%; /* Full width */
+    }
+
+    .cyber-input:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    #loadingMessage, #successMessage {
+      transition: opacity 0.3s ease;
+    }
+
+    #loadingMessage.hidden, #successMessage.hidden {
+      display: none;
+    }
+
+    /* Spinner styles */
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-top: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 10px; /* Space between text and spinner */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Hide loading message initially */
+    #loadingMessage {
+      display: none;
+    }
+
+    /* Button loading effect */
+    .loading-button {
+      background: linear-gradient(120deg, #ffffff, #a0a0a0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 6s linear infinite;
+    }
+  </style>
+  
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
 
@@ -17,11 +679,10 @@
 </head>
 
 <body class="__className_2dbf9b">
-  <header class="container mx-auto max-w-4xl flex items-center py-8">
-    <div class="header-content">
+  <header class="container mx-auto max-w-4xl flex items-center justify-between py-8">
       <div class="brand-container">
-        <p class="text-white sm:text-2xl flex gap-2 items-center justify-center cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100" class="ai-head-icon">
+        <p class="text-white sm:text-2xl flex gap-2 items-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100" class="ai-head-icon">
             <!-- Robot head base - more curved/realistic shape -->
             <path d="M50 15 
                      C30 15, 20 25, 20 40
@@ -29,19 +690,19 @@
                      C20 80, 35 85, 50 85
                      C65 85, 80 80, 80 65
                      L80 40
-                     C80 25, 70 15, 50 15" 
-                  fill="none" 
-                  stroke="white" 
-                  stroke-width="3" 
+                     C80 25, 70 15, 50 15"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="3"
                   class="head-base"/>
             
             <!-- Face plate -->
             <path d="M35 35
                      C35 30, 65 30, 65 35
                      L65 70
-                     C65 75, 35 75, 35 70 Z" 
-                  fill="none" 
-                  stroke="white" 
+                     C65 75, 35 75, 35 70 Z"
+                  fill="none"
+                  stroke="white"
                   stroke-width="1.5"
                   opacity="0.5"/>
             
@@ -50,7 +711,7 @@
               <!-- Left eye -->
               <circle cx="40" cy="45" r="6" fill="none" stroke="white" class="eye-outer"/>
               <circle cx="40" cy="45" r="4" fill="white" class="eye left-eye">
-                <animate 
+                <animate
                   attributeName="r"
                   values="4;1;4"
                   dur="3s"
@@ -67,7 +728,7 @@
               <!-- Right eye -->
               <circle cx="60" cy="45" r="6" fill="none" stroke="white" class="eye-outer"/>
               <circle cx="60" cy="45" r="4" fill="white" class="eye right-eye">
-                <animate 
+                <animate
                   attributeName="r"
                   values="4;1;4"
                   dur="3s"
@@ -84,13 +745,13 @@
             
             <!-- Enhanced antenna -->
             <g class="antenna">
-              <path d="M50 15 L50 5" 
-                    stroke="white" 
+              <path d="M50 15 L50 5"
+                    stroke="white"
                     stroke-width="2">
-                <animate 
-                  attributeName="d" 
-                  values="M50 15 L50 5;M50 15 L48 5;M50 15 L52 5;M50 15 L50 5" 
-                  dur="3s" 
+                <animate
+                  attributeName="d"
+                  values="M50 15 L50 5;M50 15 L48 5;M50 15 L52 5;M50 15 L50 5"
+                  dur="3s"
                   repeatCount="indefinite"/>
               </path>
               <circle cx="50" cy="5" r="2" fill="white">
@@ -112,26 +773,26 @@
             
             <!-- Animated circuit lines -->
             <g class="circuit-lines">
-              <path d="M35 60 Q50 65 65 60" 
-                    stroke="white" 
-                    stroke-width="1.5" 
-                    fill="none" 
+              <path d="M35 60 Q50 65 65 60"
+                    stroke="white"
+                    stroke-width="1.5"
+                    fill="none"
                     class="circuit-line">
-                <animate 
-                  attributeName="stroke-dasharray" 
-                  values="0,40;40,0;0,40" 
-                  dur="3s" 
+                <animate
+                  attributeName="stroke-dasharray"
+                  values="0,40;40,0;0,40"
+                  dur="3s"
                   repeatCount="indefinite"/>
               </path>
-              <path d="M35 67 Q50 72 65 67" 
-                    stroke="white" 
-                    stroke-width="1.5" 
-                    fill="none" 
+              <path d="M35 67 Q50 72 65 67"
+                    stroke="white"
+                    stroke-width="1.5"
+                    fill="none"
                     class="circuit-line">
-                <animate 
-                  attributeName="stroke-dasharray" 
-                  values="40,0;0,40;40,0" 
-                  dur="3s" 
+                <animate
+                  attributeName="stroke-dasharray"
+                  values="40,0;0,40;40,0"
+                  dur="3s"
                   repeatCount="indefinite"/>
               </path>
             </g>
@@ -166,7 +827,7 @@
             </div>
 
             <!-- Value Propositions -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-8">
               <div class="feature-card">
                 <span class="feature-icon">⚡</span>
                 <h2 class="gradient-text text-2xl sm:text-3xl font-semibold">Optimize Operations</h2>
@@ -189,8 +850,8 @@
         </div>
 
         <!-- Contact Form Section -->
-        <form action="https://getform.io/f/ajjmmjga" 
-              method="POST" 
+        <form action="https://getform.io/f/ajjmmjga"
+              method="POST"
               class="cyber-form"
               data-webhook="https://api.getform.io/v1/forms/ajjmmjga?token=755btn1nwC2NnIyOOadzlK4DojitZFH5DwYUePt5YsHQGmHXfFoPCbMH6a7W">
           <div class="form-header">
@@ -230,8 +891,7 @@
 
   <!-- Add the services modal -->
   <div id="servicesModal" class="services-modal hidden">
-    <div class="modal-content">
-      <div class="glass-reflection"></div>
+    <div class="modal-content cyber-form">
       <div class="modal-header">
         <h2 class="cyber-text text-3xl mb-4">Our AI Services</h2>
         <button class="close-button" onclick="toggleServices()">×</button>
@@ -308,7 +968,7 @@
         this.x += this.vx;
         this.y += this.vy;
 
-        if (this.x < 0 || this.x > canvas.width || 
+        if (this.x < 0 || this.x > canvas.width ||
             this.y < 0 || this.y > canvas.height) {
           this.reset();
         }
